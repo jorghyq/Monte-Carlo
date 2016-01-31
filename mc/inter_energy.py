@@ -54,9 +54,9 @@ def fit_energy(conf,energy_table):
 if __name__ == "__main__":
     elem = Elements(3,'C')
     elem.init_num = 3
-    elem.conf[0,:] = [3,3,0]
-    elem.conf[1,:] = [2,5,0]
-    elem.conf[2,:] = [9,3,0]
+    elem.conf[0,:] = [3,3,0,0]
+    elem.conf[1,:] = [2,5,0,0]
+    elem.conf[2,:] = [9,3,0,0]
     print elem.conf
     conf_1 = np.array([[3,3,0],[2,5,0]])
     conf_2 = np.array([[3,3,0],[3,6,0]])
