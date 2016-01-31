@@ -4,6 +4,7 @@ import numpy as np
 class Elements:
     def __init__(self, num, symbol):
         self.num = num
+        self.init_num = 0
         self.symbol = symbol
         # 3 columns : x, y, theta
         self.conf = np.zeros((self.num,3))
@@ -14,7 +15,7 @@ class Elements:
         # initialize the molecules on the surface
         pass
 
-    def update(self):
+    def update(self,ind,x,y,theta):
         # update the self.conf array
         pass
 

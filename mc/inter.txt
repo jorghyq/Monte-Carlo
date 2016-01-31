@@ -1,0 +1,16 @@
+# intermolecular energy for BDS molecules
+d_min:
+d_max:
+theta_min: 0
+theta_max: 360
+
+0, 2, 2.5
+0, -4, 0
+45, -4, 0
+90, -4, 0
+135, -4, 0
+180, -4, 0
+225, -4, 0
+270, -4, 0
+315, -4, 0
+360, -4, 0
