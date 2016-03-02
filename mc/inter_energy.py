@@ -4,7 +4,7 @@ from elements import Elements
 
 def inter_energy(x,y,theta,elements,inter_energy_table):
     # get the minima and maxima of the interaction distance
-    r_min = inter_energy_table[0,1]
+    #r_min = inter_energy_table[0,1]
     r_max = inter_energy_table[0,-1]
     print r_min, r_max
     # matrixing the input position
@@ -34,10 +34,10 @@ def inter_energy(x,y,theta,elements,inter_energy_table):
         return True, energy
 
 def fit_energy(conf,energy_table):
-    theta_input = conf[:,0]
-    theta_min = energy_table[1,0]
-    r_input = conf[:,1]
-    r_min = energy_table[0,1]
+    x_input = conf[:,0]
+    x_min = energy_table[1,0]
+    y_input = conf[:,1]
+    y_min = energy_table[0,1]
     print r_min, theta_min
     r = energy_table[0,1:]
     print r

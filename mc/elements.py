@@ -1,5 +1,4 @@
 #class elements will be defined here
-import numpy as np
 
 class Elements:
     def __init__(self, num, type_num):
