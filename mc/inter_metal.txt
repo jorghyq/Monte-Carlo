@@ -1,0 +1,11 @@
+# intermolecular energy for metal adatoms
+theta range: 0
+theta step: 0
+x range: 1.5
+x step: 1
+y range: 1.5
+y step: 1
+#### TABLE START ####
+0, 1, 0
+1, 1, 1
+0, 1, 0
