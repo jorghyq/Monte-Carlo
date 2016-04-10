@@ -5,6 +5,8 @@ x range: 3.5
 x step: 1
 y range: 3.5
 y step: 1
+x low: 1.5
+y low: 1.5
 #### TABLE START ####
 0, 0, 0, 1, 0, 0, 0
 0, 0, -10, 1, -10, 0, 0

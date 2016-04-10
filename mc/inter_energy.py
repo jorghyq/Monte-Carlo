@@ -72,6 +72,6 @@ if __name__ == "__main__":
     print elem.conf
     conf_1 = np.array([[3,4,0]])
     conf_2 = np.array([[3,3,0],[3,6,0]])
-    energy_table = EnergyTable('inter.txt')
+    energy_table = EnergyTable('./etables/inter.txt')
     e = inter_energy(-1,8,8,0,elem,energy_table)
     print e

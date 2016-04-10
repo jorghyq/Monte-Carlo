@@ -27,10 +27,10 @@ class EnergyTables:
 
 if __name__ == "__main__":
     e_table = EnergyTables()
-    e_table.load_energy_table('11','inter_mol.txt')
-    e_table.load_energy_table('12','inter_mol_metal.txt')
-    e_table.load_energy_table('21','inter_metal_mol.txt')
-    e_table.load_energy_table('22','inter_metal.txt')
+    e_table.load_energy_table('11','./etables/inter_mol.txt')
+    e_table.load_energy_table('12','./etables/inter_mol_metal.txt')
+    e_table.load_energy_table('21','./etables/inter_metal_mol.txt')
+    e_table.load_energy_table('22','./etables/inter_metal.txt')
     print e_table.table_num
     print type(e_table.energy_tables)
     for key,value in e_table.energy_tables.iteritems():

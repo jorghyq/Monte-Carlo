@@ -152,7 +152,7 @@ if __name__ == "__main__":
     SINGLE = False
     if SINGLE:
         solver = Solver(40,40)
-        solver.load_inter_map('inter.txt')
+        solver.load_inter_map('./etables/inter.txt')
         solver.init()
         print solver.mol.get_conf()
         solver.step_single(100000)
@@ -161,10 +161,10 @@ if __name__ == "__main__":
     else:
         solver = Solver(40,40)
         solver.load_inter_maps()
-        solver.e_tables.load_energy_table('11','inter_mol.txt')
-        solver.e_tables.load_energy_table('12','inter_mol_metal.txt')
-        solver.e_tables.load_energy_table('21','inter_metal_mol.txt')
-        solver.e_tables.load_energy_table('22','inter_metal.txt')
+        solver.e_tables.load_energy_table('11','./etables/inter_mol.txt')
+        solver.e_tables.load_energy_table('12','./etables/inter_mol_metal.txt')
+        solver.e_tables.load_energy_table('21','./etables/inter_metal_mol.txt')
+        solver.e_tables.load_energy_table('22','./etables/inter_metal.txt')
         solver.init_multi([20,20])
         print "######### INIT DONE ###########"
         solver.step_multi(10000000)

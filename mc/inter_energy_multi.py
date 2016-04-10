@@ -82,10 +82,10 @@ if __name__ == "__main__":
     conf_1 = np.array([[3,4,0]])
     conf_2 = np.array([[3,3,0],[3,6,0]])
     e_tables = EnergyTables()
-    e_tables.load_energy_table('11','inter_mol.txt')
-    e_tables.load_energy_table('12','inter_mol_metal.txt')
-    e_tables.load_energy_table('21','inter_metal_mol.txt')
-    e_tables.load_energy_table('22','inter_metal.txt')
+    e_tables.load_energy_table('11','./etables/inter_mol.txt')
+    e_tables.load_energy_table('12','./etables/inter_mol_metal.txt')
+    e_tables.load_energy_table('21','./etables/inter_metal_mol.txt')
+    e_tables.load_energy_table('22','./etables/inter_metal.txt')
     #print e_tables.get_energy_table['11']
     e = inter_energy_multi(-1,8,8,0,1,elem,e_tables)
     print e
