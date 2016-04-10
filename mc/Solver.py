@@ -24,6 +24,7 @@ class Solver():
         self.step_counter = 0
 
     def init_single(self):
+        self.element_settings = [self.element_num]
         while self.mol.num_init < self.mol.num:
             ind,x,y,theta = self.get_new_conf()
             state, energy = inter_energy(self.mol.num_init,x,y,theta,self.mol,self.energy_table)
@@ -76,7 +77,7 @@ class Solver():
                     p = min(math.exp(-(energy_new-energy_old)),1)
                     if p > rd.random():
                         # TODO: finish the metropolis part
-                        self.mol.update(ind,x,y,theta)
+                        self.mol.update(ind,x,y,theta,1)
                 step_to_go = step_to_go - 1
                 if step_to_go%hundredth == 0:
                     if step_to_go != step_num:
@@ -149,13 +150,13 @@ class Solver():
 
 
 if __name__ == "__main__":
-    SINGLE = False
+    SINGLE = True
     if SINGLE:
         solver = Solver(40,40)
         solver.load_inter_map('./etables/inter.txt')
-        solver.init()
+        solver.init_single()
         print solver.mol.get_conf()
-        solver.step_single(100000)
+        solver.step_single(10000)
         solver.write_conf('test.txt')
         solver.show()
     else:
