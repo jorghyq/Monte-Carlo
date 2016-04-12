@@ -11,6 +11,7 @@ from EnergyTable import EnergyTable
 from EnergyTables import EnergyTables
 from inter_energy import inter_energy
 from inter_energy_multi import inter_energy_multi
+from inter_energy_real import inter_energy_real
 
 class Solver():
     def __init__(self, element_num, lattice_size):
@@ -26,10 +27,10 @@ class Solver():
     def init_single(self):
         self.element_settings = [self.element_num]
         while self.mol.num_init < self.mol.num:
-            ind,x,y,theta = self.get_new_conf()
-            state, energy = inter_energy(self.mol.num_init,x,y,theta,self.mol,self.energy_table)
+            ind,x,y,theta = self.get_new_conf_real()
+            state, energy = inter_energy_real(self.mol.num_init,x,y,theta,self.mol,self.energy_table)
             if state:
-                self.mol.update(self.mol.num_init,x,y,0)
+                self.mol.update(self.mol.num_init,x,y,0,1)
                 self.mol.num_init = self.mol.num_init + 1
                 #print x,y,theta,self.mol.conf
                 #print state, energy
@@ -66,13 +67,13 @@ class Solver():
         else:
             while step_to_go > 0:
                 # pick a molecule and its new random position and angle
-                ind,x,y,theta = self.get_new_conf()
+                ind,x,y,theta = self.get_new_conf_real()
                 # get its old position and angle
                 x_old,y_old,theta_old = self.mol.conf[ind,:3]
                 # compute the energy of the old and new configuration,
                 # respectively
-                state_old, energy_old = inter_energy(ind,x_old,y_old,theta_old,self.mol,self.energy_table)
-                state_new, energy_new = inter_energy(-1,x,y,theta,self.mol,self.energy_table)
+                state_old, energy_old = inter_energy_real(ind,x_old,y_old,theta_old,self.mol,self.energy_table)
+                state_new, energy_new = inter_energy_real(-1,x,y,theta,self.mol,self.energy_table)
                 if state_new:
                     p = min(math.exp(-(energy_new-energy_old)),1)
                     if p > rd.random():
@@ -128,6 +129,13 @@ class Solver():
         theta = 0
         return ind_mol,x,y,theta
 
+    def get_new_conf_real(self,INIT=False):
+        ind_mol = rd.randint(0,self.element_num-1)
+        x = rd.uniform(0,self.lattice_size-1)
+        y = rd.uniform(0,self.lattice_size-1)
+        theta = 0
+        return ind_mol,x,y,theta
+
     def show(self):
         #x = [-1.5,-0.5,-0.5,0.5,0.5,1.5,1.5,0.5,0.5,-0.5,-0.5,-1.5,-1.5]
         #y = [0.5,0.5,1.5,1.5,0.5,0.5,-0.5,-0.5,-1.5,-1.5,-0.5,-0.5,0.5]
@@ -145,6 +153,29 @@ class Solver():
             plt.hold(True)
         plt.show()
 
+    def show_real(self):
+        x_coor = self.mol.conf[:,0]
+        y_coor = self.mol.conf[:,1]
+        x_min = x_coor - 5
+        x_max = x_coor + 5
+        y_min = y_coor - 5
+        y_max = y_coor + 5
+        print x_coor
+        print y_coor
+        print x_min
+        print x_max
+        #plt.plot(x_coor,y_min)
+        for i in range(x_coor.size):
+            #plt.axhline(y=y_coor[i],xmin=x_min[i],xmax=x_max[i],linewidth=4)
+            #plt.axvline(x=x_coor[i],ymin=y_min[i],ymax=y_max[i],linewidth=4)
+            #plt.hold(True)
+            plt.plot([x_coor[i],x_coor[i]],[y_min[i],y_max[i]],linewidth=4)
+            plt.plot([x_min[i],x_max[i]],[y_coor[i],y_coor[i]],linewidth=4)
+            plt.hold(True)
+        plt.axes().set_aspect('equal', 'datalim')
+        plt.scatter(x_coor,y_coor,s=500,c='r',marker='o',linewidth=4)
+        plt.show()
+
     def write_conf(self,path_to_write):
         np.savetxt(path_to_write,self.mol.conf,fmt='%0.1d',delimiter=',')
 
@@ -152,13 +183,13 @@ class Solver():
 if __name__ == "__main__":
     SINGLE = True
     if SINGLE:
-        solver = Solver(40,40)
-        solver.load_inter_map('./etables/inter.txt')
+        solver = Solver(10,40)
+        solver.load_inter_map('./etables/inter_mol_real.txt')
         solver.init_single()
         print solver.mol.get_conf()
-        solver.step_single(10000)
+        solver.step_single(100000)
         solver.write_conf('test.txt')
-        solver.show()
+        solver.show_real()
     else:
         solver = Solver(40,40)
         solver.load_inter_maps()

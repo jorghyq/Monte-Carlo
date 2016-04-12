@@ -9,6 +9,7 @@ class Elements:
         self.type_num = type_num
         # 4 columns : x, y, theta, type
         self.conf = np.zeros((self.num,4))
+        self.shape = [(-5,5),(-5,5)]
         #self.conf[:,-1] = 1
         # correlation table, when two molecules are close, corr_table[i][j]=1
         self.corr_table = np.zeros((self.num, self.num))
