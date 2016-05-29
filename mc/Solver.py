@@ -63,6 +63,7 @@ class Solver():
     def step_single(self, step_num, SHOW_MODE=0):
         step_to_go = step_num
         hundredth = step_num/100
+        tenth = step_num/10
         if step_num <= 0:
             print "step number should be positve integer"
         else:
@@ -84,7 +85,10 @@ class Solver():
                 if step_to_go%hundredth == 0:
                     if step_to_go != step_num:
                         print "%d / %d done" % (100-step_to_go/hundredth,100)
-
+                if step_to_go%tenth == 0:
+                    if step_to_go != step_num:
+                        self.write_conf('temp/test_%d_%d.txt'%(100-step_to_go/tenth,step_num))
+                        print "%d / %d is written to file" % (step_to_go/tenth,100)
     def step_multi(self, step_num, SHOW_MODE=0):
         step_to_go = step_num
         hundredth = step_num/100
@@ -193,12 +197,17 @@ class Solver():
 
 if __name__ == "__main__":
     SINGLE = True
+    import sys
+    if len(sys.argv) > 1:
+        RUNS = float(sys.argv[1])
+    else:
+        RUNS = 1000000
     if SINGLE:
-        solver = Solver(10,150)
+        solver = Solver(5,150)
         solver.load_inter_map('./etables/inter_mol_real.txt')
         solver.init_single()
         print solver.mol.get_conf()
-        solver.step_single(100000)
+        solver.step_single(RUNS)
         solver.write_conf('test.txt')
         solver.show_real()
     else:
@@ -210,6 +219,6 @@ if __name__ == "__main__":
         solver.e_tables.load_energy_table('22','./etables/inter_metal.txt')
         solver.init_multi([20,20])
         print "######### INIT DONE ###########"
-        solver.step_multi(10000000)
+        solver.step_multi(RUNS)
         solver.show()
 
