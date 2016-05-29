@@ -7,6 +7,8 @@ class EnergyTable:
         print table_path
         self.x_low = None
         self.y_low = None
+        self.theta_min = 0
+        self.table_mat_path = None
         with open(table_path,'r') as f:
             headers = f.readlines()
             for line in headers:
@@ -27,6 +29,8 @@ class EnergyTable:
                     self.x_low = float(line.split(':')[1].strip())
                 if re.search(r'y low', line):
                     self.y_low = float(line.split(':')[1].strip())
+                if re.search(r'mat path', line):
+                    self.table_mat_path = line.split(':')[1].strip()
                 if re.search(r'TABLE START',line):
                     ind = headers.index(line)
                     #print ind+1
@@ -35,7 +39,10 @@ class EnergyTable:
             self.x_low = 0
         if not self.y_low:
             self.y_low = 0
-        self.table = np.loadtxt(table_path, skiprows=ind+1,delimiter=',')
+        if self.table_mat_path:
+            self.table = np.load(self.table_mat_path)
+        else:
+            self.table = np.loadtxt(table_path, skiprows=ind+1,delimiter=',')
         self.x_min = -self.x_range
         self.x_max = self.x_range
         self.y_min = -self.y_range
@@ -74,7 +81,8 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         file_name = sys.argv[1]
     else:
-        file_name = './etables/inter_mol.txt'
+        file_name = './etables/inter_mol_real.txt'
     e_table = EnergyTable(file_name)
-    e_table.print_table()
+    #e_table.print_table()
     e_table.print_header()
+    print e_table.table.shape

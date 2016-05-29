@@ -30,8 +30,9 @@ class Solver():
             ind,x,y,theta = self.get_new_conf_real()
             state, energy = inter_energy_real(self.mol.num_init,x,y,theta,self.mol,self.energy_table)
             if state:
-                self.mol.update(self.mol.num_init,x,y,0,1)
+                self.mol.update(self.mol.num_init,x,y,theta,1)
                 self.mol.num_init = self.mol.num_init + 1
+                print "element # %d is done" % self.mol.num_init
                 #print x,y,theta,self.mol.conf
                 #print state, energy
                 #self.show()
@@ -108,6 +109,7 @@ class Solver():
                 if step_to_go%hundredth == 0:
                     if step_to_go != step_num:
                         print "%d / %d done" % (100-step_to_go/hundredth,100)
+                        self.write_conf('test.txt')
 
 
     def load_inter_map(self, inter_map_path):
@@ -133,7 +135,8 @@ class Solver():
         ind_mol = rd.randint(0,self.element_num-1)
         x = rd.uniform(0,self.lattice_size-1)
         y = rd.uniform(0,self.lattice_size-1)
-        theta = 0
+        theta = rd.randint(0,19)*30
+        #theta = rd.randint(0,360)
         return ind_mol,x,y,theta
 
     def show(self):
@@ -156,24 +159,32 @@ class Solver():
     def show_real(self):
         x_coor = self.mol.conf[:,0]
         y_coor = self.mol.conf[:,1]
-        x_min = x_coor - 5
-        x_max = x_coor + 5
-        y_min = y_coor - 5
-        y_max = y_coor + 5
-        print x_coor
-        print y_coor
-        print x_min
-        print x_max
+        theta = self.mol.conf[:,2]
+        print theta
+        arm_length = 16
+        x_min = x_coor - arm_length * np.cos(theta/180*np.pi)
+        x_max = x_coor + arm_length * np.cos(theta/180*np.pi)
+        y_min = y_coor - arm_length * np.sin(theta/180*np.pi)
+        y_max = y_coor + arm_length * np.sin(theta/180*np.pi)
+        theta_comp = theta + 90
+        x_min2 = x_coor - arm_length * np.cos(theta_comp/180*np.pi)
+        x_max2 = x_coor + arm_length * np.cos(theta_comp/180*np.pi)
+        y_min2 = y_coor - arm_length * np.sin(theta_comp/180*np.pi)
+        y_max2 = y_coor + arm_length * np.sin(theta_comp/180*np.pi)
         #plt.plot(x_coor,y_min)
         for i in range(x_coor.size):
             #plt.axhline(y=y_coor[i],xmin=x_min[i],xmax=x_max[i],linewidth=4)
             #plt.axvline(x=x_coor[i],ymin=y_min[i],ymax=y_max[i],linewidth=4)
             #plt.hold(True)
-            plt.plot([x_coor[i],x_coor[i]],[y_min[i],y_max[i]],linewidth=4)
-            plt.plot([x_min[i],x_max[i]],[y_coor[i],y_coor[i]],linewidth=4)
+            #plt.plot([x_coor[i],x_coor[i]],[y_min[i],y_max[i]],linewidth=4)
+            #plt.plot([x_min[i],x_max[i]],[y_coor[i],y_coor[i]],linewidth=4)
+            plt.arrow(x_min[i],y_min[i],x_max[i]-x_min[i],y_max[i]-y_min[i],fc='b',ec='b',linewidth=4,head_width=0.05,head_length=0.1)
+            plt.plot([x_min2[i],x_max2[i]],[y_min2[i],y_max2[i]],'b',linewidth=4)
             plt.hold(True)
         plt.axes().set_aspect('equal', 'datalim')
-        plt.scatter(x_coor,y_coor,s=500,c='r',marker='o',linewidth=4)
+        plt.scatter(x_coor,y_coor,s=50,c='r',marker='o',linewidth=4)
+        plt.xlim([-20,self.lattice_size+20])
+        plt.ylim([-20,self.lattice_size+20])
         plt.show()
 
     def write_conf(self,path_to_write):
@@ -183,7 +194,7 @@ class Solver():
 if __name__ == "__main__":
     SINGLE = True
     if SINGLE:
-        solver = Solver(10,40)
+        solver = Solver(10,150)
         solver.load_inter_map('./etables/inter_mol_real.txt')
         solver.init_single()
         print solver.mol.get_conf()

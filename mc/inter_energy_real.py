@@ -42,7 +42,7 @@ def inter_energy_real(ind,x,y,theta,elements,inter_energy_table):
     for i in range(0,dif_mat.shape[0]):
         #print dif_mat[i,:2]
         #print i
-        energy_temp = fit_energy(dif_mat[i,:2],inter_energy_table)
+        energy_temp = fit_energy(dif_mat[i,:3],inter_energy_table)
         #print "energy_temp: %f" % energy_temp
         #var = raw_input("Please enter something: ")
         if energy_temp > 0:
@@ -55,15 +55,17 @@ def inter_energy_real(ind,x,y,theta,elements,inter_energy_table):
 def fit_energy(conf,energy_table):
     #print conf.shape
     #print conf
-    assert len(conf.shape) < 2
+    assert len(conf.shape) < 3
     #x_ind = (np.floor((conf[0,0] - energy_table.x_min)/energy_table.x_step)).astype(int)
     #y_ind = (np.floor((conf[0,1] - energy_table.y_min)/energy_table.y_step)).astype(int)
     x_ind = int(np.floor((conf[0] - energy_table.x_min)/energy_table.x_step))
     #x_ceil = int(np.floor((conf[0] - energy_table.x_min)/energy_table.x_step))
     y_ind = int(np.floor((conf[1] - energy_table.y_min)/energy_table.y_step))
     #y_ceil = int(np.floor((conf[1] - energy_table.y_min)/energy_table.y_step))
+    theta_ind = int(np.floor((conf[2] + 360 - energy_table.theta_min)/energy_table.theta_step%(360/energy_table.theta_step)))
+    #print conf, x_ind, y_ind, theta_ind
     #print conf[0,0],x_ind,conf[0,1],y_ind,energy_table.table[x_ind,y_ind]
-    return energy_table.table[x_ind,y_ind]
+    return energy_table.table[x_ind,y_ind,theta_ind]
 
 if __name__ == "__main__":
     elem = Elements(3,'C')
