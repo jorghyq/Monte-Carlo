@@ -139,7 +139,8 @@ class Solver():
         ind_mol = rd.randint(0,self.element_num-1)
         x = rd.uniform(0,self.lattice_size-1)
         y = rd.uniform(0,self.lattice_size-1)
-        theta = rd.randint(0,19)*30
+        #theta = rd.randint(0,12)*30
+        theta = 0
         #theta = rd.randint(0,360)
         return ind_mol,x,y,theta
 

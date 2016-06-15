@@ -1,11 +1,11 @@
 # intermolecular energy for TPyPP molecules
-theta range: 360
-theta step: 30
+theta range: 0
+theta step: 360
 x range [0.1nm]: 36
 x step [0.1nm]: 2
 y range [0.1nm]: 36
 y step [0.1nm]: 2
 x low [0.1nm]: 6
 y low [0.1nm]: 6
-mat path: /home/jorghyq/Project/Monte-Carlo/mc/etables/table_real3.npy
+mat path: /home/jorghyq/Project/Monte-Carlo/mc/etables/table_real4.npy
 #### TABLE START ####
