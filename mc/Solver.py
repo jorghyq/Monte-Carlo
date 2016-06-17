@@ -16,9 +16,13 @@ from inter_energy_real import inter_energy_real
 class Solver():
     def __init__(self, setting_path):
         self.param = {}
+        self.load_params(setting_path)
+        self.element_num = int(self.param['element_num'])
+        self.lattice_size = int(self.param['lattice_size'])
+        self.element_type = int(self.param['element_type'])
+        self.load_inter_map()
         # default settings of the lattice
-        self.element_num = element_num
-        self.lattice_size = lattice_size
+        #print self.element_type
         self.mol = Elements(self.element_num,'TPyP')
         self.step_counter = 0
 
@@ -33,8 +37,9 @@ class Solver():
     def init_single(self):
         self.element_settings = [self.element_num]
         while self.mol.num_init < self.mol.num:
-            ind,x,y,theta = self.get_new_conf_real()
-            state, energy = inter_energy_real(self.mol.num_init,x,y,theta,self.mol,self.energy_table)
+            ind,x,y,theta = self.get_new_conf()
+            #state, energy = inter_energy_real(self.mol.num_init,x,y,theta,self.mol,self.energy_table)
+            state, energy = inter_energy(self.mol.num_init,x,y,theta,self.mol,self.energy_table)
             if state:
                 self.mol.update(self.mol.num_init,x,y,theta,1)
                 self.mol.num_init = self.mol.num_init + 1
@@ -75,13 +80,15 @@ class Solver():
         else:
             while step_to_go > 0:
                 # pick a molecule and its new random position and angle
-                ind,x,y,theta = self.get_new_conf_real()
+                ind,x,y,theta = self.get_new_conf()
                 # get its old position and angle
                 x_old,y_old,theta_old = self.mol.conf[ind,:3]
                 # compute the energy of the old and new configuration,
                 # respectively
-                state_old, energy_old = inter_energy_real(ind,x_old,y_old,theta_old,self.mol,self.energy_table)
-                state_new, energy_new = inter_energy_real(-1,x,y,theta,self.mol,self.energy_table)
+                #state_old, energy_old = inter_energy_real(ind,x_old,y_old,theta_old,self.mol,self.energy_table)
+                state_old, energy_old = inter_energy(ind,x_old,y_old,theta_old,self.mol,self.energy_table)
+                #state_new, energy_new = inter_energy_real(-1,x,y,theta,self.mol,self.energy_table)
+                state_new, energy_new = inter_energy(-1,x,y,theta,self.mol,self.energy_table)
                 if state_new:
                     p = min(math.exp(-(energy_new-energy_old)),1)
                     if p > rd.random():
@@ -99,6 +106,7 @@ class Solver():
     def step_multi(self, step_num, SHOW_MODE=0):
         step_to_go = step_num
         hundredth = step_num/100
+        tenth = step_num/10
         if step_num <= 0:
             print "step number should be positve integer"
         else:
@@ -121,17 +129,21 @@ class Solver():
                     if step_to_go != step_num:
                         print "%d / %d done" % (100-step_to_go/hundredth,100)
                         self.write_conf('test.txt')
+                if step_to_go%tenth == 0:
+                    if step_to_go != step_num:
+                        self.write_conf('temp/test_%d_%d.txt'%(100-step_to_go/tenth,step_num))
+                        print "%d / %d is written to file" % (step_to_go/tenth,100)
 
 
-    def load_inter_map(self, inter_map_path):
+    def load_inter_map(self):
         if self.param['etable_pre']:
-            if self.param['element_type'] == 1:
+            if self.element_type == 1:
                 self.energy_table = EnergyTable(self.param['etable_pre']+'11'+self.param['etable_post'])
                 print 'Energy table loaded'
             else:
                 self.e_tables = EnergyTables()
-                for i in range(self.param['element_type']):
-                    for j in range(self.param['element_type']):
+                for i in range(self.element_type):
+                    for j in range(self.element_type):
                         ind = ('%d%d') % (i+1,j+1)
                         self.e_tables.load_energy_table(ind,self.param['etable_pre']+ind+self.param ['etable_post'])
                         print 'Energy table %s loaded' % ind
@@ -141,7 +153,7 @@ class Solver():
         pass
 
     def get_new_conf(self,INIT=False):
-        if self.param[real]:
+        if self.param['real']:
             ind_mol = rd.randint(0,self.element_num-1)
             x = rd.uniform(0,self.lattice_size-1)
             y = rd.uniform(0,self.lattice_size-1)
@@ -208,7 +220,7 @@ class Solver():
 
 
 if __name__ == "__main__":
-    SINGLE = True
+    SINGLE = False
     import sys
     if len(sys.argv) > 1:
         RUNS = float(sys.argv[1])
@@ -221,14 +233,14 @@ if __name__ == "__main__":
         print solver.mol.get_conf()
         solver.step_single(RUNS)
         solver.write_conf('test.txt')
-        solver.show_real()
+        solver.show()
     else:
-        solver = Solver(40,40)
-        solver.load_inter_maps()
-        solver.e_tables.load_energy_table('11','./etables/inter_mol.txt')
-        solver.e_tables.load_energy_table('12','./etables/inter_mol_metal.txt')
-        solver.e_tables.load_energy_table('21','./etables/inter_metal_mol.txt')
-        solver.e_tables.load_energy_table('22','./etables/inter_metal.txt')
+        solver = Solver('settings.ini')
+        #solver.load_inter_maps()
+        #solver.e_tables.load_energy_table('11','./etables/inter_mol.txt')
+        #solver.e_tables.load_energy_table('12','./etables/inter_mol_metal.txt')
+        #solver.e_tables.load_energy_table('21','./etables/inter_metal_mol.txt')
+        #solver.e_tables.load_energy_table('22','./etables/inter_metal.txt')
         solver.init_multi([20,20])
         print "######### INIT DONE ###########"
         solver.step_multi(RUNS)
