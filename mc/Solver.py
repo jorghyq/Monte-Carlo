@@ -124,9 +124,9 @@ class Solver():
 
 
     def load_inter_map(self, inter_map_path):
-        if self.param['energy_table_pre']:
+        if self.param['etable_pre']:
             if self.param['element_type'] == 1:
-                self.energy_table = EnergyTable(self.param['etable_pre']+'11'+self.param['etable_post']])
+                self.energy_table = EnergyTable(self.param['etable_pre']+'11'+self.param['etable_post'])
                 print 'Energy table loaded'
             else:
                 self.e_tables = EnergyTables()
@@ -215,8 +215,8 @@ if __name__ == "__main__":
     else:
         RUNS = 1000000
     if SINGLE:
-        solver = Solver(5,150)
-        solver.load_inter_map('./etables/inter_mol_real.txt')
+        solver = Solver('settings.ini')
+        solver.load_inter_map()
         solver.init_single()
         print solver.mol.get_conf()
         solver.step_single(RUNS)
