@@ -14,15 +14,21 @@ from inter_energy_multi import inter_energy_multi
 from inter_energy_real import inter_energy_real
 
 class Solver():
-    def __init__(self, element_num, lattice_size):
+    def __init__(self, setting_path):
         self.param = {}
         # default settings of the lattice
-        # TODO finish the load param function
-        #self.param = load_param(config_path)
         self.element_num = element_num
         self.lattice_size = lattice_size
         self.mol = Elements(self.element_num,'TPyP')
         self.step_counter = 0
+
+    def load_params(self, setting_path):
+        if os.path.isfile(setting_path):
+            with open(setting_path,'r') as f:
+                lines = f.readlines()
+            for line in lines:
+                temp = line.split(':')
+                self.param[temp[0].strip()] = temp[1].strip()
 
     def init_single(self):
         self.element_settings = [self.element_num]
@@ -89,6 +95,7 @@ class Solver():
                     if step_to_go != step_num:
                         self.write_conf('temp/test_%d_%d.txt'%(100-step_to_go/tenth,step_num))
                         print "%d / %d is written to file" % (step_to_go/tenth,100)
+
     def step_multi(self, step_num, SHOW_MODE=0):
         step_to_go = step_num
         hundredth = step_num/100
@@ -117,31 +124,35 @@ class Solver():
 
 
     def load_inter_map(self, inter_map_path):
-        # load intermolecular interaction energy map
-        self.energy_table = EnergyTable(inter_map_path)
-
-    def load_inter_maps(self):
-        self.e_tables = EnergyTables()
-
+        if self.param['energy_table_pre']:
+            if self.param['element_type'] == 1:
+                self.energy_table = EnergyTable(self.param['etable_pre']+'11'+self.param['etable_post']])
+                print 'Energy table loaded'
+            else:
+                self.e_tables = EnergyTables()
+                for i in range(self.param['element_type']):
+                    for j in range(self.param['element_type']):
+                        ind = ('%d%d') % (i+1,j+1)
+                        self.e_tables.load_energy_table(ind,self.param['etable_pre']+ind+self.param ['etable_post'])
+                        print 'Energy table %s loaded' % ind
 
     def load_surf_map(self, surf_map_path):
         # load surface interaction energy map
         pass
 
     def get_new_conf(self,INIT=False):
-        ind_mol = rd.randint(0,self.element_num-1)
-        x = rd.randint(0,self.lattice_size-1)
-        y = rd.randint(0,self.lattice_size-1)
-        theta = 0
-        return ind_mol,x,y,theta
-
-    def get_new_conf_real(self,INIT=False):
-        ind_mol = rd.randint(0,self.element_num-1)
-        x = rd.uniform(0,self.lattice_size-1)
-        y = rd.uniform(0,self.lattice_size-1)
-        #theta = rd.randint(0,12)*30
-        theta = 0
-        #theta = rd.randint(0,360)
+        if self.param[real]:
+            ind_mol = rd.randint(0,self.element_num-1)
+            x = rd.uniform(0,self.lattice_size-1)
+            y = rd.uniform(0,self.lattice_size-1)
+            #theta = rd.randint(0,12)*30
+            theta = 0
+            #theta = rd.randint(0,360)
+        else:
+            ind_mol = rd.randint(0,self.element_num-1)
+            x = rd.randint(0,self.lattice_size-1)
+            y = rd.randint(0,self.lattice_size-1)
+            theta = 0
         return ind_mol,x,y,theta
 
     def show(self):
