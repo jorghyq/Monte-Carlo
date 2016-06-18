@@ -25,6 +25,7 @@ class Solver():
         #print self.element_type
         self.mol = Elements(self.element_num,'TPyP')
         self.step_counter = 0
+        print 'real system: %d' % self.param['real']
 
     def load_params(self, setting_path):
         if os.path.isfile(setting_path):
@@ -33,6 +34,18 @@ class Solver():
             for line in lines:
                 temp = line.split(':')
                 self.param[temp[0].strip()] = temp[1].strip()
+            self.param['real'] = int(self.param['real'])
+            if int(self.param['element_type']) > 1:
+                temp = self.param['element_num'].split(' ')
+                #print temp
+                self.param['elements'] = []
+                for i in range(int(self.param['element_type'])):
+                    self.param['elements'].append(int(temp[i].strip()))
+                    print 'element # %d has %d elements' % (i+1,int(temp[i].strip()))
+                self.param['element_num'] = sum(self.param['elements'])
+                #print self.param['elements']
+            else:
+                self.param['elements'] = [int(self.param['element_num'])]
 
     def init_single(self):
         self.element_settings = [self.element_num]
@@ -50,12 +63,9 @@ class Solver():
             else:
                 continue
 
-    def init_multi(self,setting = None):
-        if setting:
-            self.element_settings = setting
-            self.element_type_num = len(setting)
+    def init_multi(self):
         while self.mol.num_init < self.mol.num:
-            for typ,num in enumerate(self.element_settings):
+            for typ,num in enumerate(self.param['elements']):
                 print "type # %d has %d element" % (typ, num)
                 i = 0
                 while i < num:
@@ -172,7 +182,7 @@ class Solver():
         #y = [0.5,0.5,1.5,1.5,0.5,0.5,-0.5,-0.5,-1.5,-1.5,-0.5,-0.5,0.5]
         #xy1 = list(zip(x,y))
         marker_options = ['+','.','o','1']
-        for typ,num in enumerate(self.element_settings):
+        for typ,num in enumerate(self.param['elements']):
             print typ, num
             print self.mol.conf
             conf = self.mol.conf[self.mol.conf[:,-1] == typ + 1]
@@ -241,7 +251,7 @@ if __name__ == "__main__":
         #solver.e_tables.load_energy_table('12','./etables/inter_mol_metal.txt')
         #solver.e_tables.load_energy_table('21','./etables/inter_metal_mol.txt')
         #solver.e_tables.load_energy_table('22','./etables/inter_metal.txt')
-        solver.init_multi([20,20])
+        solver.init_multi()
         print "######### INIT DONE ###########"
         solver.step_multi(RUNS)
         solver.show()
